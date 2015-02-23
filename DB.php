@@ -177,9 +177,15 @@ class DB
         } else return $obj;
     }
 	#######################################################################################
-	#
+    /**
+     * @param $table
+     * @param $where
+     * @param null $lgc
+     * @return mixed
+     */
 	#######################################################################################
-	public function get_record_where($table,$where,$lgc=NULL)
+
+    public function get_record_where($table,$where,$lgc=NULL)
 	{
 		try {
 			// set the PDO error mode to exception
@@ -217,7 +223,6 @@ class DB
 	#######################################################################################
 	public function get_max_id($table)
 	{
-
 		try {
 			// set the PDO error mode to exception
 			$sql="SELECT max(id) as id FROM ".$table;
@@ -225,7 +230,7 @@ class DB
     		$stmt->execute();
     		$obj = $stmt->fetch(PDO::FETCH_OBJ);
     		$db = null;
-    		return $obj;
+    		return $obj->id;
 		}catch(PDOException $e){
 			 echo $sql . "<br>" . $e->getMessage();
 		}
@@ -247,6 +252,40 @@ class DB
 			else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
 		}*/
 	}
+    #######################################################################################
+    #
+    #######################################################################################
+    public function get_min_id($table)
+    {
+        try {
+            // set the PDO error mode to exception
+            $sql="SELECT min(id) as id FROM ".$table;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $obj = $stmt->fetch(PDO::FETCH_OBJ);
+            $db = null;
+            return $obj->id;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+        if(!empty($table))
+        {
+        $sql="SELECT max(id) as id FROM ".$table;
+    //		echo '<br>'.$sql;
+        if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
+            {
+                if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
+                else
+                {
+                $obj = new stdClass();
+                $obj=(object)$array;
+                return $obj;
+                }
+            }
+            else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
+        }*/
+    }
 
 	#######################################################################################
 	#
