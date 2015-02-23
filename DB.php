@@ -2,37 +2,40 @@
 class DB
 {
 	//glabal $DB;
-	/*
+/*
 	protected $link;
 	protected $dbtype    = 'mysqli';
 	protected $dblibrary = 'native';
 	protected $dbhost    = 'fdb4.freehostingeu.com';
 	protected $dbname    = '1261695_base01';
 	protected $dbuser    = '1261695_base01';
-	protected $dbpass    = 'base01@AZERTY';
-	*/
+	protected $dbpass    = 'base01@AZERTY';*/
 
 	protected $db;
-	protected $dbtype    = 'mysqli';
+	protected $dbtype    = 'mysql';
 	protected $dblibrary = 'native';
 	protected $dbhost    = 'localhost';
-	protected $dbname    = 'LocalDB';
+	protected $dbname    = 'hello';
 	protected $dbuser    = 'root';
 	protected $dbpass    = '';
 
-	function __construct(){
+
+    function __construct(){
 	// Establish the connection with DB.
+
 		try {
-			$db = new PDO("$dbtype:host=$hostname;dbname=$dbname",$username, $password);
-			//$conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-		} catch(PDOException $e){
-			die ($e->getMessage());
-		}
-	}
 
-	// verification if the database exist.
+            $this->db = new PDO("$this->dbtype:host=$this->dbhost;dbname=$this->dbname", $this->dbuser, $this->dbpass);
+	    	//$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	    } catch(PDOException $e)
+	    	{
+	    die ($e->getMessage());
+	    }
 
-	/*
+    }
+ 
+    // verification if the database exist .
+    /*
 	public function db_exist($name)
 	{
 		if(!empty($name))
@@ -42,48 +45,52 @@ class DB
 		}
 	}
 	*/
-
 	/*
 	public function select_db($name)
 	{
+		
+		
 		if(!empty($name))
 		{
+			
 			//if(!mysql_select_db($name,$this->link)) die('can t use '.$name.' : '.mysql_error());
 		}
+		
 	}*/
 
 
 	#######################################################################################
-	#				creation of the database if not exists.
+	#						creation of the database if not exists.
 	#######################################################################################
-
 	public function create_db($name)
 	{
 		try {
 			$sql = 'CREATE DATABASE IF NOT EXISTS '.$name;
-			// use exec() because no results are returned
-			$db->exec($sql);
-			echo "Database created successfully<br>";
-			$db = null;
-		} catch (PDOException $e) {
-			die ($e->getMessage());
-		}
-
-		/*if(!empty($name))
+    		// use exec() because no results are returned
+   			$db->exec($sql);
+   			echo "Database created successfully<br>";
+   			$db = null;
+		   	
+		 } catch (PDOException $e) {
+		 	die ($e->getMessage());
+		   	
+		 } 
+		 /*  
+		if(!empty($name))
 		{
+			
 			/*if (mysql_query($sql,$this->link)) {
-			echo "Database ".$name." created successfully. \n";
+			    echo "Database ".$name." created successfully. \n";
 			} else {
-			die('Error creating database: ' . mysql_error() . "\n"); 
+			    die('Error creating database: ' . mysql_error() . "\n"); 
 			}
 		}
 		else echo 'give the new db a name';*/
-	}
-
+    }
 	#######################################################################################
-	#				verification if table exist.
+	#							verification if table exist.
 	#######################################################################################    
-
+	
 	public function table_exist($tableName)
 	{
 
@@ -101,26 +108,30 @@ class DB
 
 	public function get_records($table)
 	{
-
+		
 	}
-
+	
 
 	#######################################################################################
-	#
+    /**
+    * @param $table
+    * @param $id
+    * @return mixed
+    */
 	#######################################################################################
 
-	public function get_recordById($table,$id)
+    public function get_recordById($table,$id)
 	{
 		try {
 			// set the PDO error mode to exception
 			$sql="SELECT * FROM ".$table." WHERE id=".$id;
-			$stmt = $conn->prepare($sql); 
-		$stmt->execute();
-		$obj = $stmt->fetch(PDO::FETCH_OBJ);
-		$db = null;
-		return $obj;
+			$stmt = $this->db->prepare($sql);
+    		$stmt->execute();
+    		$obj = $stmt->fetch(PDO::FETCH_OBJ);
+    		$db = null;
+    		return $obj;
 		}catch(PDOException $e){
-			echo $sql . "<br>" . $e->getMessage();
+			 echo $sql . "<br>" . $e->getMessage();
 		}
 		/*
 		if(!empty($table) && !empty($id))
@@ -141,49 +152,52 @@ class DB
 	#######################################################################################
 	#
 	#######################################################################################
-
 	protected function construct_sql_select($obj,$lgc=NULL)
 	{
-		if(!is_array($obj)) $obj=(array)$obj;
-		$keys = array_keys($obj); // list of the keys.
-		$values = array_values($obj);   // list of the values.
-		$K_length = count($keys);
-		$sql="";
-		for($i=0; $i< $K_length; $i++) {
-			if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i]))
-			{
-				if($i == $K_length-1) $sql.="`".$keys[$i]."`=".$values[$i]."";
-			else $sql.="`".$keys[$i]."`=".$values[$i]." ".$lgc." ";
-			}else{
-				if($i == $K_length-1) $sql.="`".$keys[$i]."`='".$values[$i]."'";
-			else $sql.="`".$keys[$i]."`='".$values[$i]."' ".$lgc." ";
-			}
-		}
-		return $sql;
-	}
-
+        if(!is_string($obj)){
+            if(!is_array($obj)) $obj=(array)$obj;
+            $keys = array_keys($obj);       // list of the keys.
+            $values = array_values($obj);   // list of the values.
+            $K_length = count($keys);
+            $sql="";
+            for($i=0; $i< $K_length; $i++)
+            {
+                if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i]))
+                {
+                    if($i == $K_length-1) $sql.="`".$keys[$i]."`=".$values[$i]."";
+                    else $sql.="`".$keys[$i]."`=".$values[$i]." ".$lgc." ";
+                }
+                else
+                {
+                    if($i == $K_length-1) $sql.="`".$keys[$i]."`='".$values[$i]."'";
+                    else $sql.="`".$keys[$i]."`='".$values[$i]."' ".$lgc." ";
+                }
+            }
+            return $sql;
+        } else return $obj;
+    }
 	#######################################################################################
 	#
 	#######################################################################################
-
 	public function get_record_where($table,$where,$lgc=NULL)
 	{
 		try {
 			// set the PDO error mode to exception
+            //echo($this->construct_sql_select($where,$lgc));
 			$sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
-			$stmt = $conn->prepare($sql); 
-			$stmt->execute();
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
-			$db = null;
-			return $obj;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $obj = $stmt->fetch(PDO::FETCH_OBJ);
+            $db = null;
+            return $obj;
 		}catch(PDOException $e){
-			echo $sql . "<br>" . $e->getMessage();
+			 echo $sql . "<br>" . $e->getMessage();
 		}
 		/*
 		if(!empty($table) && !empty($where))
 		{
 		$sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
-			echo '<br>'.$sql;
+	//		echo '<br>'.$sql;
 		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
 			{
 				if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
@@ -201,26 +215,25 @@ class DB
 	#######################################################################################
 	#
 	#######################################################################################
-
 	public function get_max_id($table)
 	{
 
 		try {
 			// set the PDO error mode to exception
 			$sql="SELECT max(id) as id FROM ".$table;
-			$stmt = $conn->prepare($sql); 
-			$stmt->execute();
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
-			$db = null;
-			return $obj;
+			$stmt = $this->db->prepare($sql);
+    		$stmt->execute();
+    		$obj = $stmt->fetch(PDO::FETCH_OBJ);
+    		$db = null;
+    		return $obj;
 		}catch(PDOException $e){
-			echo $sql . "<br>" . $e->getMessage();
+			 echo $sql . "<br>" . $e->getMessage();
 		}
 		/*
 		if(!empty($table))
 		{
 		$sql="SELECT max(id) as id FROM ".$table;
-			echo '<br>'.$sql;
+	//		echo '<br>'.$sql;
 		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
 			{
 				if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
@@ -238,13 +251,13 @@ class DB
 	#######################################################################################
 	#
 	#######################################################################################
-
 /*	public function get_array_id_where($table,$where)
 	{
 		$i=0;
 		$arrayOfIDs = array();
 		if(!empty($table)  && !empty($where))
 		{
+			
 			$sql="SELECT id FROM ".$table." WHERE id_club=".$where;
 	//		echo '<br>'.$sql;
 		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
@@ -271,6 +284,7 @@ class DB
 		$arrayOfIDs = array();
 		if(!empty($table))
 		{
+			
 			$sql="SELECT id FROM ".$table;
 	//		echo '<br>'.$sql;
 		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
@@ -297,6 +311,7 @@ class DB
 		$arrayOfIDs = array();
 		if(!empty($table))
 		{
+			
 			$sql="SELECT nom_club FROM ".$table;
 	//		echo '<br>'.$sql;
 		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
@@ -322,6 +337,7 @@ class DB
 		if(!is_array($obj)) $obj=(array)$obj;
 		$keys = array_keys($obj);       // list of the keys.
         $values = array_values($obj);   // list of the values.
+        
         $K_length = count($keys);       // length of the array $obj.
         //constructing the sql query.
 		$sql="(";
@@ -349,6 +365,7 @@ class DB
 			}
 		}
 		$sql.=")";
+		
 		return $sql;
 	}
 
@@ -412,7 +429,7 @@ class DB
 	#
 	#######################################################################################
 	public function drop_db($name)
-	{
+	{  
 		if(!empty($name))
 		{
 		$sql='DROP DATABASE IF EXISTS '.$name;
@@ -515,3 +532,5 @@ class DB
 	}
 	*/
 }
+
+?>
