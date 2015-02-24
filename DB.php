@@ -54,17 +54,6 @@ class DB
         } catch (PDOException $e) {
             die ($e->getMessage());
         }
-        /*
-       if(!empty($name))
-       {
-
-           /*if (mysql_query($sql,$this->link)) {
-               echo "Database ".$name." created successfully. \n";
-           } else {
-               die('Error creating database: ' . mysql_error() . "\n");
-           }
-       }
-       else echo 'give the new db a name';*/
     }
 
     #######################################################################################
@@ -103,20 +92,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($table) && !empty($id))
-        {
-            $sql="SELECT * FROM ".$table." WHERE id=".$id;
-            if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-            {
-                $array = mysql_fetch_array($resource_sql, MYSQL_ASSOC);
-                $obj = new stdClass();
-                $obj=(object)$array;
-                return $obj;
-            }
-            else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-        }
-        else echo 'table name needed.';*/
     }
 
     #######################################################################################
@@ -168,23 +143,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($table) && !empty($where))
-        {
-        $sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
-    //		echo '<br>'.$sql;
-        if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-            {
-                if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
-                else
-                {
-                $obj = new stdClass();
-                $obj=(object)$array;
-                return $obj;
-                }
-            }
-            else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-        }*/
     }
 
     #######################################################################################
@@ -205,23 +163,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($table))
-        {
-        $sql="SELECT max(id) as id FROM ".$table;
-    //		echo '<br>'.$sql;
-        if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-            {
-                if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
-                else
-                {
-                $obj = new stdClass();
-                $obj=(object)$array;
-                return $obj;
-                }
-            }
-            else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-        }*/
     }
 
     #######################################################################################
@@ -242,23 +183,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-                if(!empty($table))
-                {
-                $sql="SELECT max(id) as id FROM ".$table;
-            //		echo '<br>'.$sql;
-                if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-                    {
-                        if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
-                        else
-                        {
-                        $obj = new stdClass();
-                        $obj=(object)$array;
-                        return $obj;
-                        }
-                    }
-                    else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-                }*/
     }
 
 ###################################################################################################################################
@@ -316,20 +240,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($table))
-        {
-            $sql = "INSERT INTO ".$table." ".$this->construct_sql_insert($data);
-            if (mysql_query($sql,$this->link)) {
-                //echo "record saved successfully in table : ".$table."\n";
-                return true;
-            } else {
-                die('Error inserting record : ' . mysql_error() . "\n");
-                return false;
-            }
-        }
-        else echo 'give the table name.';
-        */
     }
 
 ###################################################################################################################################
@@ -350,15 +260,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($table) && !empty($id))
-        {
-            $sql="DELETE FROM ".$table." WHERE id=".$id;
-            if(mysql_query($sql)) echo 'record with id : '.$id.' deleted.';
-            else die('fialed to delete record id : < '.$id.' >'.mysql_error());
-        }
-        else echo 'table or id needed.';
-        */
     }
 
     #######################################################################################
@@ -397,15 +298,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($table))
-        {
-            $sql="DELETE FROM ".$table." WHERE id>=0";
-            if(mysql_query($sql)) echo 'table '.$table.' is Empty.';
-            else die('fialed to delete All Record in table '.$table.'  '.mysql_error());
-        }
-        else echo 'table name needed.';
-        */
     }
 
     #######################################################################################
@@ -424,15 +316,6 @@ class DB
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
-        /*
-        if(!empty($name))
-        {
-            $sql='DROP DATABASE IF EXISTS '.$name;
-            if(mysql_query($sql,$this->link)) echo $name.' deleted.';
-            else echo 'nothing';
-        }
-        else echo 'name the DB want to delete';
-        */
     }
 
 ###################################################################################################################################
@@ -505,23 +388,7 @@ class DB
             #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
-        }/*
-        if(!empty($table) && !empty($where))
-        {
-            $sql="UPDATE ".$table." SET ".$this->construct_sql_update($data,$where,$lgc);
-            //echo '<br>'.$sql.'<br>';
-            if (mysql_query($sql,$this->link))
-            {
-                //echo "record updated successfully in table : ".$table."\n";
-                return true;
-            }
-            else
-            {
-                die('Error updating record : ' . mysql_error() . "\n");
-                return false;
-            }
         }
-        else echo 'give the table name.';*/
     }
 
     #######################################################################################
