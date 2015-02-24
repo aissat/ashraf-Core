@@ -365,10 +365,11 @@ class DB
      * @param $where
      */
     #######################################################################################
-    public function delete_record_where($table,$where)
+    public function delete_record_where($table,$where,$lgc=NULL)
     {
         try {
-            $sql="DELETE FROM ".$table." WHERE id=".$this->construct_sql_select($where);
+            $sql="DELETE FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
+            echo $sql;
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $db = null;
@@ -376,7 +377,6 @@ class DB
             echo $sql . "<br>" . $e->getMessage();
         }
     }
-
     #######################################################################################
     /**
      * @param $table
