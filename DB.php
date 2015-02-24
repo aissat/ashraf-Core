@@ -14,7 +14,7 @@ class DB
         // Establish the connection with DB.
         try {
             $this->db = new PDO("$this->dbtype:host=$this->dbhost;dbname=$this->dbname", $this->dbuser, $this->dbpass);
-            $this->$db->beginTransaction();
+            $this->db->beginTransaction();
             //$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e){
             die ($e->getMessage());
@@ -48,9 +48,9 @@ class DB
         try {
             $sql = 'CREATE DATABASE IF NOT EXISTS '.$name;
             // use exec() because no results are returned
-            $db->exec($sql);
+            $this->db->exec($sql);
             echo "Database created successfully<br>";
-            $db = null;
+            $this->db = null;
         } catch (PDOException $e) {
             die ($e->getMessage());
         }
@@ -98,7 +98,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $obj = $stmt->fetch(PDO::FETCH_OBJ);
-            $db = null;
+            $this->db = null;
             return $obj;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -163,7 +163,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $obj = $stmt->fetch(PDO::FETCH_OBJ);
-            $db = null;
+            #$this->db = null;
             return $obj;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -200,7 +200,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $obj = $stmt->fetch(PDO::FETCH_OBJ);
-            $db = null;
+            #$this->db = null;
             return $obj->id;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -237,7 +237,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $obj = $stmt->fetch(PDO::FETCH_OBJ);
-            $db = null;
+            #$this->db = null;
             return $obj->id;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -312,7 +312,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $this->db->commit();
-            $db = null;
+            #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
@@ -346,7 +346,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $this->db->commit();
-            $db = null;
+            #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
@@ -374,7 +374,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $this->db->commit();
-            $db = null;
+            #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
@@ -393,7 +393,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $this->db->commit();
-            $db = null;
+            #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
@@ -420,7 +420,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $this->db->commit();
-            $db = null;
+            #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }
@@ -502,7 +502,7 @@ class DB
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $this->db->commit();
-            $db = null;
+            #$this->db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
         }/*
