@@ -369,7 +369,6 @@ class DB
     {
         try {
             $sql="DELETE FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
-            echo $sql;
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $db = null;
