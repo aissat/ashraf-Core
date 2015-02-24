@@ -158,6 +158,7 @@ class DB
             // set the PDO error mode to exception
             //echo($this->construct_sql_select($where,$lgc));
             $sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
+            echo $sql;
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $obj = $stmt->fetch(PDO::FETCH_OBJ);
@@ -329,8 +330,6 @@ class DB
         */
     }
 
-
-
 ###################################################################################################################################
 #           Delete Function ...
 ###################################################################################################################################
@@ -376,6 +375,7 @@ class DB
             echo $sql . "<br>" . $e->getMessage();
         }
     }
+
     #######################################################################################
     /**
      * @param $table
@@ -429,6 +429,93 @@ class DB
         */
     }
 
+###################################################################################################################################
+#           Update Function ...
+###################################################################################################################################
+
+    #######################################################################################
+    #
+    #######################################################################################
+    protected function construct_sql_update($obj,$where,$lgc=NULL)
+    {
+        if(!is_array($obj)) $obj=(array)$obj;
+        if(!is_array($where)) $where=(array)$where;
+        //$lgc two values : OR/AND  ==> after where x=x (OR/AND) y=y ...***** ???
+        // if($lgc=='AND')
+        // $obj (data going to be in the database sooner.... )
+        $keys = array_keys($obj);       // list of the keys.
+        $values = array_values($obj);   // list of the values.
+
+        // $where (locating the record that we want to modifie...)
+        $w_keys = array_keys($where);       // list of the keys.
+        $w_values = array_values($where);   // list of the values.
+
+        $K_length = count($keys);           // length of the array $obj.
+        $w_length = count($w_keys);
+        // Constructing the SQL query.
+        $sql="";
+
+        for($i=0; $i< $K_length; $i++)
+        {
+            if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i]))
+            {
+                if($i == $K_length-1) $sql.="`".$keys[$i]."`=".$values[$i]."";
+                else $sql.="`".$keys[$i]."`=".$values[$i].",";
+            }
+            else
+            {
+                if($i == $K_length-1) $sql.="`".$keys[$i]."`='".$values[$i]."'";
+                else $sql.="`".$keys[$i]."`='".$values[$i]."',";
+            }
+        }
+        $sql.=" WHERE ";
+        for($i=0; $i< $w_length; $i++)
+        {
+            if(is_bool($w_values[$i]) || is_numeric($w_values[$i]) || is_null($w_values[$i]))
+            {
+                if($i == $w_length-1) $sql.="`".$w_keys[$i]."`=".$w_values[$i]."";
+                else $sql.="`".$w_keys[$i]."`=".$w_values[$i]." ".$lgc." ";
+            }
+            else
+            {
+                if($i == $w_length-1) $sql.="`".$w_keys[$i]."`='".$w_values[$i]."'";
+                else $sql.="`".$w_keys[$i]."`='".$w_values[$i]."' ".$lgc." ";
+            }
+        }
+
+        return $sql;
+    }
+
+    #######################################################################################
+    # $lgc is the (and - or) logical connector used after where when $where brought more then one value.
+    #######################################################################################
+    public function update_record($table,$data,$where,$lgc=NULL)
+    {
+        try {
+            $sql="UPDATE ".$table." SET ".$this->construct_sql_update($data,$where,$lgc);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }/*
+        if(!empty($table) && !empty($where))
+        {
+            $sql="UPDATE ".$table." SET ".$this->construct_sql_update($data,$where,$lgc);
+            //echo '<br>'.$sql.'<br>';
+            if (mysql_query($sql,$this->link))
+            {
+                //echo "record updated successfully in table : ".$table."\n";
+                return true;
+            }
+            else
+            {
+                die('Error updating record : ' . mysql_error() . "\n");
+                return false;
+            }
+        }
+        else echo 'give the table name.';*/
+    }
 	#######################################################################################
 	#
 	#######################################################################################
@@ -491,9 +578,8 @@ class DB
             $arrayOfIDs = array();
             if(!empty($table))
             {
-
                 $sql="SELECT nom_club FROM ".$table;
-        //		echo '<br>'.$sql;
+        //      echo '<br>'.$sql;
             if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
                 {
                     while ($row = mysql_fetch_array($resource_sql, MYSQL_ASSOC))
@@ -526,81 +612,6 @@ class DB
             echo $obj;
         }
 
-        #######################################################################################
-        #
-        #######################################################################################
-        protected function construct_sql_update($obj,$where,$lgc=NULL)
-        {
-            if(!is_array($obj)) $obj=(array)$obj;
-            if(!is_array($where)) $where=(array)$where;
-            //$lgc two values : OR/AND  ==> after where x=x (OR/AND) y=y ...***** ???
-            // if($lgc=='AND')
-            // $obj (data going to be in the database sooner.... )
-            $keys = array_keys($obj);       // list of the keys.
-            $values = array_values($obj);   // list of the values.
-
-            // $where (locating the record that we want to modifie...)
-            $w_keys = array_keys($where);       // list of the keys.
-            $w_values = array_values($where);   // list of the values.
-
-            $K_length = count($keys);           // length of the array $obj.
-            $w_length = count($w_keys);
-            // Constructing the SQL query.
-            $sql="";
-
-            for($i=0; $i< $K_length; $i++)
-            {
-                if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i]))
-                {
-                    if($i == $K_length-1) $sql.="`".$keys[$i]."`=".$values[$i]."";
-                    else $sql.="`".$keys[$i]."`=".$values[$i].",";
-                }
-                else
-                {
-                if($i == $K_length-1) $sql.="`".$keys[$i]."`='".$values[$i]."'";
-                else $sql.="`".$keys[$i]."`='".$values[$i]."',";
-                }
-            }
-            $sql.=" WHERE ";
-            for($i=0; $i< $w_length; $i++)
-            {
-                if(is_bool($w_values[$i]) || is_numeric($w_values[$i]) || is_null($w_values[$i]))
-                {
-                    if($i == $w_length-1) $sql.="`".$w_keys[$i]."`=".$w_values[$i]."";
-                    else $sql.="`".$w_keys[$i]."`=".$w_values[$i]." ".$lgc." ";
-                }
-                else
-                {
-                if($i == $w_length-1) $sql.="`".$w_keys[$i]."`='".$w_values[$i]."'";
-                else $sql.="`".$w_keys[$i]."`='".$w_values[$i]."' ".$lgc." ";
-                }
-            }
-
-            return $sql;
-        }
-
-        #######################################################################################
-        # $lgc is the (and - or) logical connector used after where when $where brought more then one value.
-        #######################################################################################
-        public function update_record($table,$data,$where,$lgc=NULL)
-        {
-            if(!empty($table) && !empty($where))
-            {
-                $sql="UPDATE ".$table." SET ".$this->construct_sql_update($data,$where,$lgc);
-                //echo '<br>'.$sql.'<br>';
-                if (mysql_query($sql,$this->link))
-                {
-                    //echo "record updated successfully in table : ".$table."\n";
-                    return true;
-                }
-                else
-                {
-                    die('Error updating record : ' . mysql_error() . "\n");
-                    return false;
-                }
-            }
-            else echo 'give the table name.';
-        }
         */
 }
 
