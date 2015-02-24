@@ -14,6 +14,7 @@ class DB
         // Establish the connection with DB.
         try {
             $this->db = new PDO("$this->dbtype:host=$this->dbhost;dbname=$this->dbname", $this->dbuser, $this->dbpass);
+            $this->$db->beginTransaction();
             //$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e){
             die ($e->getMessage());
@@ -310,6 +311,7 @@ class DB
             $sql = "INSERT INTO ".$table." ".$this->construct_sql_insert($data);
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
+            $this->db->commit();
             $db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -343,6 +345,7 @@ class DB
             $sql="DELETE FROM ".$table." WHERE id=".$id;
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
+            $this->db->commit();
             $db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -370,6 +373,7 @@ class DB
             $sql="DELETE FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
+            $this->db->commit();
             $db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -388,6 +392,7 @@ class DB
             $sql="DELETE FROM ".$table." WHERE id>=0";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
+            $this->db->commit();
             $db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -414,6 +419,7 @@ class DB
             $sql='DROP DATABASE IF EXISTS '.$name;
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
+            $this->db->commit();
             $db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
@@ -495,6 +501,7 @@ class DB
             $sql="UPDATE ".$table." SET ".$this->construct_sql_update($data,$where,$lgc);
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
+            $this->db->commit();
             $db = null;
         }catch(PDOException $e){
             echo $sql . "<br>" . $e->getMessage();
