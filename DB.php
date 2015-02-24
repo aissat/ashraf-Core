@@ -1,24 +1,24 @@
 <?php
 class DB
 {
-	//glabal $DB;
-	protected $db;
-	protected $dbtype    = 'mysql';
-	protected $dblibrary = 'native';
-	protected $dbhost    = 'localhost';
-	protected $dbname    = 'hello';
-	protected $dbuser    = 'root';
-	protected $dbpass    = '';
+    //glabal $DB;
+    protected $db;
+    protected $dbtype    = 'mysql';
+    protected $dblibrary = 'native';
+    protected $dbhost    = 'localhost';
+    protected $dbname    = 'hello';
+    protected $dbuser    = 'root';
+    protected $dbpass    = '';
 
-	function __construct(){
-		// Establish the connection with DB.
-		try {
-			$this->db = new PDO("$this->dbtype:host=$this->dbhost;dbname=$this->dbname", $this->dbuser, $this->dbpass);
-			//$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch(PDOException $e){
-			die ($e->getMessage());
-		}
-	}
+    function __construct(){
+        // Establish the connection with DB.
+        try {
+            $this->db = new PDO("$this->dbtype:host=$this->dbhost;dbname=$this->dbname", $this->dbuser, $this->dbpass);
+            //$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch(PDOException $e){
+            die ($e->getMessage());
+        }
+    }
 
     // verification if the database exist .
     /*
@@ -31,216 +31,179 @@ class DB
 		}
 	}
 	*/
-	/*
-	public function select_db($name)
-	{
-		if(!empty($name))
-		{
-			//if(!mysql_select_db($name,$this->link)) die('can t use '.$name.' : '.mysql_error());
-		}
-	}*/
+    /*
+    public function select_db($name)
+    {
+        if(!empty($name))
+        {
+            //if(!mysql_select_db($name,$this->link)) die('can t use '.$name.' : '.mysql_error());
+        }
+    }*/
 
-	#######################################################################################
-	#			    creation of the database if not exists.
-	#######################################################################################
-	public function create_db($name){
-		try {
-			$sql = 'CREATE DATABASE IF NOT EXISTS '.$name;
-			// use exec() because no results are returned
-			$db->exec($sql);
-			echo "Database created successfully<br>";
-			$db = null;
-		} catch (PDOException $e) {
-			die ($e->getMessage());
-		} 
-		 /*  
-		if(!empty($name))
-		{
-			
-			/*if (mysql_query($sql,$this->link)) {
-			    echo "Database ".$name." created successfully. \n";
-			} else {
-			    die('Error creating database: ' . mysql_error() . "\n"); 
-			}
-		}
-		else echo 'give the new db a name';*/
-	}
-	
-	#######################################################################################
-	#			      verification if table exist.
-	#######################################################################################    
-	
-	public function table_exist($tableName){
-	}
+    #######################################################################################
+    #			    creation of the database if not exists.
+    #######################################################################################
+    public function create_db($name){
+        try {
+            $sql = 'CREATE DATABASE IF NOT EXISTS '.$name;
+            // use exec() because no results are returned
+            $db->exec($sql);
+            echo "Database created successfully<br>";
+            $db = null;
+        } catch (PDOException $e) {
+            die ($e->getMessage());
+        }
+        /*
+       if(!empty($name))
+       {
 
-	public function create_table($name,$obj){
-		// Object 
-	}
+           /*if (mysql_query($sql,$this->link)) {
+               echo "Database ".$name." created successfully. \n";
+           } else {
+               die('Error creating database: ' . mysql_error() . "\n");
+           }
+       }
+       else echo 'give the new db a name';*/
+    }
 
-	public function drop_table($name){
-	}
+    #######################################################################################
+    #			      verification if table exist.
+    #######################################################################################
 
-	public function get_records($table){
-	}
+    public function table_exist($tableName){
+    }
 
-	#######################################################################################
-	/**
-	* @param $table
-	* @param $id
-	* @return mixed
-	*/
-	#######################################################################################
-	public function get_recordById($table,$id){
-		try {
-			// set the PDO error mode to exception
-			$sql="SELECT * FROM ".$table." WHERE id=".$id;
-			$stmt = $this->db->prepare($sql);
-			$stmt->execute();
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
-			$db = null;
-			return $obj;
-		}catch(PDOException $e){
-			 echo $sql . "<br>" . $e->getMessage();
-		}
-		/*
-		if(!empty($table) && !empty($id))
-		{
-			$sql="SELECT * FROM ".$table." WHERE id=".$id;
-			if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-			{
-				$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC);
-				$obj = new stdClass();
-				$obj=(object)$array;
-				return $obj;
-			}
-			else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-		}
-		else echo 'table name needed.';*/
-	}
+    public function create_table($name,$obj){
+        // Object
+    }
 
-	#######################################################################################
-	/**
-	* @function construct_sql_select
-	* @param $obj
-	* @param null $lgc
-	* @return array|string
-	*/
-	#######################################################################################
-	protected function construct_sql_select($obj,$lgc=NULL){
-		if(!is_string($obj)){
-			if(!is_array($obj)) $obj=(array)$obj;
-			$keys = array_keys($obj);       // list of the keys.
-			$values = array_values($obj);   // list of the values.
-			$K_length = count($keys);
-			$sql="";
-			for($i=0; $i< $K_length; $i++){
-				if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i])){
-					if($i == $K_length-1) $sql.="`".$keys[$i]."`=".$values[$i]."";
-						else $sql.="`".$keys[$i]."`=".$values[$i]." ".$lgc." ";
-				}else{
-					if($i == $K_length-1) $sql.="`".$keys[$i]."`='".$values[$i]."'";
-						else $sql.="`".$keys[$i]."`='".$values[$i]."' ".$lgc." ";
-					}
-				}
-				return $sql;
-		} else return $obj;
-	}
-	#######################################################################################
-	/**
-	* @param $table
-	* @param $where
-	* @param null $lgc
-	* @return mixed
-	*/
-	#######################################################################################
-	public function get_record_where($table,$where,$lgc=NULL){
-		try {
-		// set the PDO error mode to exception
-		//echo($this->construct_sql_select($where,$lgc));
-			$sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
-			$stmt = $this->db->prepare($sql);
-			$stmt->execute();
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
-			$db = null;
-			return $obj;
-		}catch(PDOException $e){
-			echo $sql . "<br>" . $e->getMessage();
-		}
-		/*
-		if(!empty($table) && !empty($where))
-		{
-		$sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
-	//		echo '<br>'.$sql;
-		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-			{
-				if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
-				else
-				{
-				$obj = new stdClass();
-				$obj=(object)$array;
-				return $obj;
-				}
-			}
-			else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-		}*/
-	}
+    public function drop_table($name){
+    }
 
-	#######################################################################################
-	/**
-	* @param $table
-	* @return string
-	*/
-	#######################################################################################
-	public function get_max_id($table){
-		try {
-			// set the PDO error mode to exception
-			$sql="SELECT max(id) as id FROM ".$table;
-			$stmt = $this->db->prepare($sql);
-			$stmt->execute();
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
-			$db = null;
-			return $obj->id;
-		}catch(PDOException $e){
-			 echo $sql . "<br>" . $e->getMessage();
-		}
-		/*
-		if(!empty($table))
-		{
-		$sql="SELECT max(id) as id FROM ".$table;
-	//		echo '<br>'.$sql;
-		if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
-			{
-				if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
-				else
-				{
-				$obj = new stdClass();
-				$obj=(object)$array;
-				return $obj;
-				}
-			}
-			else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
-		}*/
-	}
+    public function get_records($table){
+    }
 
-	#######################################################################################
-	/**
-	* @param $table
-	* @return string
-	*/
-	#######################################################################################
-	public function get_min_id($table){
-		try {
-			// set the PDO error mode to exception
-			$sql="SELECT min(id) as id FROM ".$table;
-			$stmt = $this->db->prepare($sql);
-			$stmt->execute();
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
-			$db = null;
-			return $obj->id;
-		}catch(PDOException $e){
-			echo $sql . "<br>" . $e->getMessage();
-		}
-/*
+    #######################################################################################
+    /**
+     * @param $table
+     * @param $id
+     * @return mixed
+     */
+    #######################################################################################
+    public function get_recordById($table,$id){
+        try {
+            // set the PDO error mode to exception
+            $sql="SELECT * FROM ".$table." WHERE id=".$id;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $obj = $stmt->fetch(PDO::FETCH_OBJ);
+            $db = null;
+            return $obj;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+        if(!empty($table) && !empty($id))
+        {
+            $sql="SELECT * FROM ".$table." WHERE id=".$id;
+            if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
+            {
+                $array = mysql_fetch_array($resource_sql, MYSQL_ASSOC);
+                $obj = new stdClass();
+                $obj=(object)$array;
+                return $obj;
+            }
+            else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
+        }
+        else echo 'table name needed.';*/
+    }
+
+    #######################################################################################
+    /**
+     * @function construct_sql_select
+     * @param $obj
+     * @param null $lgc
+     * @return array|string
+     */
+    #######################################################################################
+    protected function construct_sql_select($obj,$lgc=NULL){
+        if(!is_string($obj)){
+            if(!is_array($obj)) $obj=(array)$obj;
+            $keys = array_keys($obj);       // list of the keys.
+            $values = array_values($obj);   // list of the values.
+            $K_length = count($keys);
+            $sql="";
+            for($i=0; $i< $K_length; $i++){
+                if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i])){
+                    if($i == $K_length-1) $sql.="`".$keys[$i]."`=".$values[$i]."";
+                    else $sql.="`".$keys[$i]."`=".$values[$i]." ".$lgc." ";
+                }else{
+                    if($i == $K_length-1) $sql.="`".$keys[$i]."`='".$values[$i]."'";
+                    else $sql.="`".$keys[$i]."`='".$values[$i]."' ".$lgc." ";
+                }
+            }
+            return $sql;
+        } else return $obj;
+    }
+    #######################################################################################
+    /**
+     * @param $table
+     * @param $where
+     * @param null $lgc
+     * @return mixed
+     */
+    #######################################################################################
+    public function get_record_where($table,$where,$lgc=NULL){
+        try {
+            // set the PDO error mode to exception
+            //echo($this->construct_sql_select($where,$lgc));
+            $sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $obj = $stmt->fetch(PDO::FETCH_OBJ);
+            $db = null;
+            return $obj;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+        if(!empty($table) && !empty($where))
+        {
+        $sql="SELECT * FROM ".$table." WHERE ".$this->construct_sql_select($where,$lgc);
+    //		echo '<br>'.$sql;
+        if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
+            {
+                if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
+                else
+                {
+                $obj = new stdClass();
+                $obj=(object)$array;
+                return $obj;
+                }
+            }
+            else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
+        }*/
+    }
+
+    #######################################################################################
+    /**
+     * @param $table
+     * @return string
+     */
+    #######################################################################################
+    public function get_max_id($table){
+        try {
+            // set the PDO error mode to exception
+            $sql="SELECT max(id) as id FROM ".$table;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $obj = $stmt->fetch(PDO::FETCH_OBJ);
+            $db = null;
+            return $obj->id;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
         if(!empty($table))
         {
         $sql="SELECT max(id) as id FROM ".$table;
@@ -257,62 +220,99 @@ class DB
             }
             else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
         }*/
-	}
+    }
+
+    #######################################################################################
+    /**
+     * @param $table
+     * @return string
+     */
+    #######################################################################################
+    public function get_min_id($table){
+        try {
+            // set the PDO error mode to exception
+            $sql="SELECT min(id) as id FROM ".$table;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $obj = $stmt->fetch(PDO::FETCH_OBJ);
+            $db = null;
+            return $obj->id;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+                if(!empty($table))
+                {
+                $sql="SELECT max(id) as id FROM ".$table;
+            //		echo '<br>'.$sql;
+                if($resource_sql=mysql_query($sql,$this->link)) //echo get_resource_type($data);
+                    {
+                        if(!$array = mysql_fetch_array($resource_sql, MYSQL_ASSOC)) return NULL;
+                        else
+                        {
+                        $obj = new stdClass();
+                        $obj=(object)$array;
+                        return $obj;
+                        }
+                    }
+                    else die('Fialed to get All Records in table '.$table.'  '.mysql_error());
+                }*/
+    }
 
 ###################################################################################################################################
 #           Insertions Function ...
 ###################################################################################################################################
 
-	#######################################################################################
-	/**
-	* @function construct_sql_insert
-	* @param $obj
-	* @return string
-	*/
-	#######################################################################################
-	protected function construct_sql_insert($obj){
-		if(!is_array($obj)) $obj=(array)$obj;
-		$keys = array_keys($obj);       // list of the keys.
-		$values = array_values($obj);   // list of the values.
-		$K_length = count($keys);       // length of the array $obj.
-		//constructing the sql query.
-		$sql="(";
-		for($i=0; $i< $K_length; $i++){
-			if($i == $K_length-1) $sql.="`".$keys[$i]."`";
-				else $sql.="`".$keys[$i]."`,";
-		}
-		$sql.=") VALUES (";
-		//In Values we decide to test the type ?? to correct the conflect of miss-match in database.
-		// problem still exist 50% solved only.
-		for($i=0; $i< $K_length; $i++){
-			if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i])){
-				if($i == $K_length-1) $sql.="".$values[$i]."";
-					else $sql.="".$values[$i].",";
-		}else{
-			if($i == $K_length-1) $sql.="'".$values[$i]."'";
-				else $sql.="'".$values[$i]."',";
-		}
-	}
-	$sql.=")";
-	return $sql;
-	}
-	#######################################################################################
-	/**
-	* @function insert_record
-	* @param $table
-	* @param $data
-	* @return bool
-	*/
-	#######################################################################################
-	public function insert_record($table,$data){
-		try {
-			$sql = "INSERT INTO ".$table." ".$this->construct_sql_insert($data);
-			$stmt = $this->db->prepare($sql);
-			$stmt->execute();
-			$db = null;
-		}catch(PDOException $e){
-			echo $sql . "<br>" . $e->getMessage();
-		}
+    #######################################################################################
+    /**
+     * @function construct_sql_insert
+     * @param $obj
+     * @return string
+     */
+    #######################################################################################
+    protected function construct_sql_insert($obj){
+        if(!is_array($obj)) $obj=(array)$obj;
+        $keys = array_keys($obj);       // list of the keys.
+        $values = array_values($obj);   // list of the values.
+        $K_length = count($keys);       // length of the array $obj.
+        //constructing the sql query.
+        $sql="(";
+        for($i=0; $i< $K_length; $i++){
+            if($i == $K_length-1) $sql.="`".$keys[$i]."`";
+            else $sql.="`".$keys[$i]."`,";
+        }
+        $sql.=") VALUES (";
+        //In Values we decide to test the type ?? to correct the conflect of miss-match in database.
+        // problem still exist 50% solved only.
+        for($i=0; $i< $K_length; $i++){
+            if(is_bool($values[$i]) || is_numeric($values[$i]) || is_null($values[$i])){
+                if($i == $K_length-1) $sql.="".$values[$i]."";
+                else $sql.="".$values[$i].",";
+            }else{
+                if($i == $K_length-1) $sql.="'".$values[$i]."'";
+                else $sql.="'".$values[$i]."',";
+            }
+        }
+        $sql.=")";
+        return $sql;
+    }
+    #######################################################################################
+    /**
+     * @function insert_record
+     * @param $table
+     * @param $data
+     * @return bool
+     */
+    #######################################################################################
+    public function insert_record($table,$data){
+        try {
+            $sql = "INSERT INTO ".$table." ".$this->construct_sql_insert($data);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
         /*
         if(!empty($table))
         {
@@ -327,8 +327,108 @@ class DB
         }
         else echo 'give the table name.';
         */
-	}
+    }
 
+
+
+###################################################################################################################################
+#           Delete Function ...
+###################################################################################################################################
+
+    #######################################################################################
+    #
+    #######################################################################################
+    public function delete_recordByID($table,$id)
+    {
+        try {
+            $sql="DELETE FROM ".$table." WHERE id=".$id;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+        if(!empty($table) && !empty($id))
+        {
+            $sql="DELETE FROM ".$table." WHERE id=".$id;
+            if(mysql_query($sql)) echo 'record with id : '.$id.' deleted.';
+            else die('fialed to delete record id : < '.$id.' >'.mysql_error());
+        }
+        else echo 'table or id needed.';
+        */
+    }
+
+    #######################################################################################
+    /**
+     * @param $table
+     * @param $where
+     */
+    #######################################################################################
+    public function delete_record_where($table,$where)
+    {
+        try {
+            $sql="DELETE FROM ".$table." WHERE id=".$this->construct_sql_select($where);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+    }
+
+    #######################################################################################
+    /**
+     * @param $table
+     */
+    #######################################################################################
+
+    public function delete_all_records($table)
+    {
+        try {
+            $sql="DELETE FROM ".$table." WHERE id>=0";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+        if(!empty($table))
+        {
+            $sql="DELETE FROM ".$table." WHERE id>=0";
+            if(mysql_query($sql)) echo 'table '.$table.' is Empty.';
+            else die('fialed to delete All Record in table '.$table.'  '.mysql_error());
+        }
+        else echo 'table name needed.';
+        */
+    }
+
+    #######################################################################################
+    /**
+     * @param $name
+     */
+    #######################################################################################
+    public function drop_db($name)
+    {
+        try {
+            $sql='DROP DATABASE IF EXISTS '.$name;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+        }catch(PDOException $e){
+            echo $sql . "<br>" . $e->getMessage();
+        }
+        /*
+        if(!empty($name))
+        {
+            $sql='DROP DATABASE IF EXISTS '.$name;
+            if(mysql_query($sql,$this->link)) echo $name.' deleted.';
+            else echo 'nothing';
+        }
+        else echo 'name the DB want to delete';
+        */
+    }
 
 	#######################################################################################
 	#
@@ -410,56 +510,6 @@ class DB
             }
         }
 
-
-        #######################################################################################
-        #
-        #######################################################################################
-        public function delete_recordByID($table,$id)
-        {
-            if(!empty($table) && !empty($id))
-            {
-            $sql="DELETE FROM ".$table." WHERE id=".$id;
-            if(mysql_query($sql)) echo 'record with id : '.$id.' deleted.';
-            else die('fialed to delete record id : < '.$id.' >'.mysql_error());
-                }
-            else echo 'table or id needed.';
-        }
-
-        #######################################################################################
-        #
-        #######################################################################################
-        public function delete_record_where($table,$where)
-        {
-
-        }
-
-        #######################################################################################
-        #
-        #######################################################################################
-        public function delete_all_records($table)
-        {
-            if(!empty($table))
-            {
-                $sql="DELETE FROM ".$table." WHERE id>=0";
-                if(mysql_query($sql)) echo 'table '.$table.' is Empty.';
-                else die('fialed to delete All Record in table '.$table.'  '.mysql_error());
-            }
-            else echo 'table name needed.';
-        }
-
-        #######################################################################################
-        #
-        #######################################################################################
-        public function drop_db($name)
-        {
-            if(!empty($name))
-            {
-            $sql='DROP DATABASE IF EXISTS '.$name;
-                if(mysql_query($sql,$this->link)) echo $name.' deleted.';
-                else echo 'nothing';
-            }
-            else echo 'name the DB want to delete';
-        }
 
         #######################################################################################
         #
